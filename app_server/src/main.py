@@ -5,13 +5,17 @@ from typing import Union
 app = FastAPI()
 
 
+class Dupa(BaseModel):
+    cipa : str
+
+
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
 
 
 @app.post("/user_tags/view")
-async def add_view_tag(body, response: Response):
+async def add_view_tag(body: Dupa, response: Response):
     response.status_code = 204
     print("View", body)
     return

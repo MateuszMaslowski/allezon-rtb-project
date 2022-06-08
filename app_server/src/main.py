@@ -21,7 +21,7 @@ class UserTags(BaseModel):
     device: str = Field(regex="^(PC|MOBILE|TV)$")
     action: str = Field(regex="^(VIEW|BUY)$")
     origin: str = Field(min_length=1)
-    product: ProductInfo
+    product_info: ProductInfo
 
 
 @app.get("/")
@@ -59,4 +59,5 @@ async def cipa(body: Dupa, response: Response):
     response.status_code = 204
     print("View", body)
 
-# curl -X POST -H "Content-Type: application/json" -d '{"time": "czas", "cookie": "kuki", "country": "PL", "device": "PC", "action": "VIEW", "origin": "US", "product_info": {"product_id": "2137", "brand_id": "balenciaga", "category_id": "566", "price": 33}}' st135vm101.rtb-lab.pl:8000/user_tags/view
+#
+curl -X POST -H "Content-Type: application/json" -d '{"time": "2022-03-22T12:15:00.000Z", "cookie": "kuki", "country": "PL", "device": "PC", "action": "VIEW", "origin": "US", "product_info": {"product_id": "2137", "brand_id": "balenciaga", "category_id": "566", "price": 33}}' st135vm101.rtb-lab.pl:8000/user_tags/view

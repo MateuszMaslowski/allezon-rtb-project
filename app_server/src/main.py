@@ -29,24 +29,10 @@ async def root():
     return {"message": "Hello World"}
 
 
-@app.post("/user_tags/view")
+@app.post("/user_tags")
 async def add_view_tag(view: UserTags, response: Response):
-    if view.action != "VIEW":
-        raise HTTPException(status_code=442,
-                            detail="user_tag posted in /user_tags/view is required to have param action: view")
-
     response.status_code = 204
     print("View", view)
-    return
-
-
-@app.post("/user_tags/buy")
-async def add_buy_tag(buy: UserTags, response: Response):
-    if buy != "BUY":
-        raise HTTPException(status_code=442,
-                            detail="user_tag posted in /user_tags/buy is required to have param action: buy")
-    response.status_code = 204
-    print("Buy", buy)
     return
 
 

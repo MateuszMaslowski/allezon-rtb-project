@@ -42,6 +42,8 @@ RUN \
 COPY aerospike.template.conf /etc/aerospike/aerospike.template.conf
 COPY entrypoint.sh /entrypoint.sh
 
+RUN chmod +x entrypoint.sh
+
 # Mount the Aerospike data directory
 # VOLUME ["/opt/aerospike/data"]
 # Mount the Aerospike config directory

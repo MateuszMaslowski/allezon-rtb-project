@@ -59,6 +59,5 @@ fi
 
 
 echo "$@"
-asadm
 
 exec "$@"

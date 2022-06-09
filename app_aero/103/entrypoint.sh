@@ -56,8 +56,6 @@ if [ "$1" = 'asd' ]; then
 fi
 
 echo "$@"
-
-asadm
 # the command isn't asd so run the command the user specified
 
 exec "$@"

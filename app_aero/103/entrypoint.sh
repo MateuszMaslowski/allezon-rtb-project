@@ -58,6 +58,4 @@ fi
 echo "$@"
 # the command isn't asd so run the command the user specified
 
-cat /var/log/aerospike/aerospike.log
-
 exec "$@"

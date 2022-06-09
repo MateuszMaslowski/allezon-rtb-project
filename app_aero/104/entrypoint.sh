@@ -51,13 +51,11 @@ if [ "$1" = 'asd' ]; then
 	echo "link $NETLINK state $(cat /sys/class/net/${NETLINK}/operstate) in ${NETLINK_COUNT}"
 
 	# asd should always run in the foreground
-	# set -- "$@" # --foreground
+	set -- "$@" --foreground
 
 fi
 
-# the command isn't asd so run the command the user specified
-
-
 echo "$@"
+# the command isn't asd so run the command the user specified
 
 exec "$@"

@@ -39,7 +39,7 @@ RUN \
 
 
 # Add the Aerospike configuration specific to this dockerfile
-COPY aerospike.template.conf /etc/aerospike/aerospike.template.conf
+COPY aerospike.template.conf /etc/aerospike/aerospike.conf
 COPY entrypoint.sh /entrypoint.sh
 
 RUN chmod +x entrypoint.sh

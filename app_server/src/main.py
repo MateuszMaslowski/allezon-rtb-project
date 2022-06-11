@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Response, HTTPException
+from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel, Field
 import re
 from typing import Union
@@ -92,7 +93,8 @@ async def add_user_tag(user_tag: UserTags, response: Response):
 
     key = ('mimuw', set, primary_key)
 
-    client.put(key, user_tag)
+    print("WIELKI PENIS", jsonable_encoder(user_tag))
+    client.put(key, jsonable_encoder(user_tag))
 
     response.status_code = 204
     return

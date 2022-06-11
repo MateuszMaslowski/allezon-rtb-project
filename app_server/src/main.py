@@ -78,6 +78,9 @@ async def add_user_tag(user_tag: UserTags, response: Response):
     if not client.is_connected():
         client.connect()
 
+    primary_key = json.dumps(user_tag, sort_keys=True).encode("utf-8")
+    primary_key = hashlib.md5(primary_key).hexdigest()
+
     # key = ('mimuw', 'cookies_' + set, user_tag.cookie)
 
     # try:
@@ -88,8 +91,6 @@ async def add_user_tag(user_tag: UserTags, response: Response):
     # except ex.RecordNotFound:
     #     no = 0
     #     client.put(key, {'no': no + 1})
-
-    primary_key = user_tag.cookie + user_tag.time + str(random.randint(1, 10000))
 
     key = ('mimuw', set, primary_key)
 
@@ -131,4 +132,4 @@ async def cipa(body: Dupa, response: Response):
 
 # curl -X POST -H "Content-Type: application/json" -d '{"time": "2022-03-22T12:15:00.000Z", "cookie": "kuki", "country": "PL", "device": "PC", "action": "VIEW", "origin": "US", "product_info": {"product_id": "2137", "brand_id": "balenciaga", "category_id": "566", "price": 33}}' st135vm101.rtb-lab.pl:8000/user_tags
 
-# curl -X POST -H "Content-Type: application/json" http://10.112.135.101:8000/user_profiles/kuki?time_range=2022-03-22T12:15:00.000Z_2022-03-22T12:15:00.001Z&limit=20
+# curl -X POST -H "Content-Type: application/json" http://10.112.135.101:8000/user_profiles/kuki?time_range=2022-03-22T12:15:00.000_2022-03-22T12:15:00.001&limit=20

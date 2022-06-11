@@ -98,7 +98,7 @@ async def add_user_tag(user_tag: UserTags, response: Response):
     return
 
 @app.post('/user_profiles/{cookie}')
-async def get_user_tags(cookie : str):
+async def get_user_tags(cookie : str, response: Response):
     response.status_code = 204
     return
 

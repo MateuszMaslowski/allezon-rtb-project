@@ -11,6 +11,7 @@ def extract_time(json):
 def get_user_tags_from_db(client, cookie, action, limit, times):
     query = client.query('mimuw', action)
 
+    return {'chuj': 'dupa'}
     user_tags = query.where(aerospike.predicates.equals('cookie', cookie),
                              aerospike.predicates.between('time', times[0], times[1]))
 

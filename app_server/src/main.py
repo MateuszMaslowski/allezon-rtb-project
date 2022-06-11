@@ -30,8 +30,8 @@ config = {
     ]
 }
 
-write_policies = {'total_timeout': 20000, 'max_retries': 0}
-read_policies = {'total_timeout': 15000, 'max_retries': 1}
+write_policies = {'total_timeout': 2000, 'max_retries': 0}
+read_policies = {'total_timeout': 1500, 'max_retries': 1}
 policies = {'write': write_policies, 'read': read_policies}
 config['policies'] = policies
 
@@ -71,32 +71,31 @@ async def root():
 
 @app.post("/user_tags")
 async def add_user_tag(user_tag: UserTags, response: Response):
-    print("UserTag", user_tag)
-
-    set = 'view'
     if user_tag.action == 'BUY':
         set = 'buy'
+    else:
+        set = 'view'
 
     if not client.is_connected():
         client.connect()
 
-    key = ('mimuw', 'cookies_' + set, user_tag.cookie)
+    # key = ('mimuw', 'cookies_' + set, user_tag.cookie)
 
-    try:
-        (key, metadata, bins) = client.get(key)
-        no = bins['no']
-        key = ('mimuw', 'cookies_' + set, user_tag.cookie)
-        client.put(key, {'no': (no + 1) % 200})
-    except ex.RecordNotFound:
-        no = 0
-        client.put(key, {'no': no + 1})
+    # try:
+    #     (key, metadata, bins) = client.get(key)
+    #     no = bins['no']
+    #     key = ('mimuw', 'cookies_' + set, user_tag.cookie)
+    #     client.put(key, {'no': (no + 1) % 200})
+    # except ex.RecordNotFound:
+    #     no = 0
+    #     client.put(key, {'no': no + 1})
 
-    primary_key = user_tag.cookie + str(no)
+    primary_key = user_tag.cookie + user_tag.time + str(random.randint(1, 10000))
 
     key = ('mimuw', set, primary_key)
 
-    print("WIELKI PENIS", jsonable_encoder(user_tag))
-    client.put(key, jsonable_encoder(user_tag))
+    json = jsonable_encoder(user_tag)
+    client.put(key, json)
 
     response.status_code = 204
     return

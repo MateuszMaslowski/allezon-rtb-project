@@ -4,8 +4,7 @@ from pydantic import BaseModel, Field
 import re
 from typing import Union
 
-import hashlib
-import json
+
 
 from get_user_tags import get_user_tags_from_db
 
@@ -16,6 +15,9 @@ from aerospike import exception as ex
 import random
 
 import operator
+
+import hashlib
+import json
 
 utc_date_time_rgx = "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z"
 
@@ -78,7 +80,9 @@ async def add_user_tag(user_tag: UserTags, response: Response):
     if not client.is_connected():
         client.connect()
 
-    primary_key = json.dumps(user_tag, sort_keys=True).encode("utf-8")
+    user_tag_json = jsonable_encoder(user_tag)
+
+    primary_key = json.dumps(user_tag_json, sort_keys=True).encode("utf-8")
     primary_key = hashlib.md5(primary_key).hexdigest()
 
     # key = ('mimuw', 'cookies_' + set, user_tag.cookie)
@@ -94,8 +98,7 @@ async def add_user_tag(user_tag: UserTags, response: Response):
 
     key = ('mimuw', set, primary_key)
 
-    json = jsonable_encoder(user_tag)
-    client.put(key, json)
+    client.put(key, user_tag_json)
 
     response.status_code = 204
     return

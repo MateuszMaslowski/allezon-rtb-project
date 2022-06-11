@@ -109,7 +109,7 @@ async def get_user_tags(cookie: str = Query(min_length=1), time_range: str = Que
     print('chuj muj')
     print(cookie, time_range, limit)
     response.status_code = 200
-    return
+    return {'twoja': 'stara'}
     #if not client.is_connected():
     #    client.connect()
 

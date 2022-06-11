@@ -30,12 +30,14 @@ config = {
     'policies': {
         'login_timeout_ms': 10000
     },
-    'connect_timeout': 10000
+    'connect_timeout': 1000
 }
 
 client = aerospike.client(config)
 
 client.connect()
+
+print(client.is_connected())
 
 create_indexes(client)
 

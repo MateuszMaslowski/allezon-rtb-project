@@ -36,10 +36,6 @@ policies = {'write': write_policies, 'read': read_policies}
 config['policies'] = policies
 
 
-client = aerospike.client(config)
-
-client.connect()
-
 print(client.is_connected())
 
 create_indexes(client)
@@ -76,8 +72,8 @@ async def add_user_tag(user_tag: UserTags, response: Response):
     else:
         set = 'view'
 
-    if not client.is_connected():
-        client.connect()
+    #if not client.is_connected():
+    #    client.connect()
 
     # key = ('mimuw', 'cookies_' + set, user_tag.cookie)
 
@@ -90,12 +86,18 @@ async def add_user_tag(user_tag: UserTags, response: Response):
     #     no = 0
     #     client.put(key, {'no': no + 1})
 
+    client = aerospike.client(config)
+
+    client.connect()
+    
     primary_key = user_tag.cookie + user_tag.time + str(random.randint(1, 10000))
 
     key = ('mimuw', set, primary_key)
 
     json = jsonable_encoder(user_tag)
     client.put(key, json)
+
+    client.close()
 
     response.status_code = 204
     return

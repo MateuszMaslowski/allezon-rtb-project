@@ -30,8 +30,8 @@ config = {
     ]
 }
 
-write_policies = {'total_timeout': 2000, 'max_retries': 0}
-read_policies = {'total_timeout': 1500, 'max_retries': 1}
+write_policies = {'total_timeout': 20000, 'max_retries': 0}
+read_policies = {'total_timeout': 15000, 'max_retries': 1}
 policies = {'write': write_policies, 'read': read_policies}
 config['policies'] = policies
 

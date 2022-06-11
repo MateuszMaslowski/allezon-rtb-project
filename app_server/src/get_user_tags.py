@@ -13,7 +13,7 @@ def get_user_tags_from_db(client, cookie, action, limit, times):
 
 
     user_tags = query.where(aerospike.predicates.equals('cookie', cookie),
-                             aerospike.predicates.between('time', times[0], times[1])).all()
+                             aerospike.predicates.between('time', times[0], times[1]))
 
     print(user_tags)
     return {'chuj': 'dupa'}

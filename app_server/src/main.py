@@ -30,12 +30,14 @@ config = {
     ]
 }
 
-write_policies = {'total_timeout': 2000, 'max_retries': 0}
-read_policies = {'total_timeout': 1500, 'max_retries': 1}
+write_policies = {'total_timeout': 2000, 'max_retries': 1}
+read_policies = {'total_timeout': 1500, 'max_retries': 4}
 policies = {'write': write_policies, 'read': read_policies}
 config['policies'] = policies
 
 # print(client.is_connected())
+client = aerospike.client(config)
+client.connect()
 
 create_indexes(config)
 
@@ -71,8 +73,8 @@ async def add_user_tag(user_tag: UserTags, response: Response):
     else:
         set = 'view'
 
-    #if not client.is_connected():
-    #    client.connect()
+    if not client.is_connected():
+        client.connect()
 
     # key = ('mimuw', 'cookies_' + set, user_tag.cookie)
 
@@ -85,10 +87,6 @@ async def add_user_tag(user_tag: UserTags, response: Response):
     #     no = 0
     #     client.put(key, {'no': no + 1})
 
-    client = aerospike.client(config)
-
-    client.connect()
-
     primary_key = user_tag.cookie + user_tag.time + str(random.randint(1, 10000))
 
     key = ('mimuw', set, primary_key)
@@ -96,13 +94,11 @@ async def add_user_tag(user_tag: UserTags, response: Response):
     json = jsonable_encoder(user_tag)
     client.put(key, json)
 
-    client.close()
-
     response.status_code = 204
     return
 
 
-@app.post('/{cookie}?time_range={time_range}?limit={limit}')
+@app.post('/user_profiles/{cookie}?time_range={time_range}?limit={limit}')
 async def get_user_tags(cookie: str = Field(min_length=1),
                         time_range: str = Field(regex="^(" + time_range_rgx + ")$"),
                         limit: int = Field(ge=1, lt=201)):

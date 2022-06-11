@@ -105,16 +105,19 @@ async def add_user_tag(user_tag: UserTags, response: Response):
 @app.post('/user_profiles/{cookie}')
 async def get_user_tags(cookie: str = Query(min_length=1), time_range: str = Query(regex="^(" + time_range_rgx + ")$"), limit: int = Query(ge=1, lt=201), response: Response= 200):
     print('chuj muj')
-    if not client.is_connected():
-        client.connect()
-
-    times = re.split('_', time_range)
-
-    views = get_user_tags_from_db(client, cookie, 'view', limit, times)
-    buys = get_user_tags_from_db(client, cookie, 'buy', limit, times)
-
+    print(cookie, time_range, limit)
     response.status_code = 200
-    return {"cookie": cookie, "views": views, "buys": buys}
+    return
+    #if not client.is_connected():
+    #    client.connect()
+
+    #times = re.split('_', time_range)
+
+    #views = get_user_tags_from_db(client, cookie, 'view', limit, times)
+    #buys = get_user_tags_from_db(client, cookie, 'buy', limit, times)
+
+    #response.status_code = 200
+    #return {"cookie": cookie, "views": views, "buys": buys}
 
 
 class Dupa(BaseModel):
@@ -128,4 +131,4 @@ async def cipa(body: Dupa, response: Response):
 
 # curl -X POST -H "Content-Type: application/json" -d '{"time": "2022-03-22T12:15:00.000Z", "cookie": "kuki", "country": "PL", "device": "PC", "action": "VIEW", "origin": "US", "product_info": {"product_id": "2137", "brand_id": "balenciaga", "category_id": "566", "price": 33}}' st135vm101.rtb-lab.pl:8000/user_tags
 
-# curl -X POST -H "Content-Type: application/json" http://10.112.135.101:8000//user_profiles/kuki?time_range=2022-03-22T12:15:00.000Z_2022-03-22T12:15:00.001Z&limit=20
+# curl -X POST -H "Content-Type: application/json" http://10.112.135.101:8000/user_profiles/kuki?time_range=2022-03-22T12:15:00.000Z_2022-03-22T12:15:00.001Z&limit=20

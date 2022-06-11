@@ -106,20 +106,16 @@ async def add_user_tag(user_tag: UserTags, response: Response):
 
 @app.post('/user_profiles/{cookie}')
 async def get_user_tags(cookie: str = Query(min_length=1), time_range: str = Query(regex="^(" + time_range_rgx + ")$"), limit : int = 200, response: Response= 200):
-    print('chuj muj')
-    print(cookie, time_range, limit)
+    if not client.is_connected():
+        client.connect()
+
+    times = re.split('_', time_range)
+
+    views = get_user_tags_from_db(client, cookie, 'view', limit, times)
+    buys = get_user_tags_from_db(client, cookie, 'buy', limit, times)
+
     response.status_code = 200
-    return {'twoja': 'stara'}
-    #if not client.is_connected():
-    #    client.connect()
-
-    #times = re.split('_', time_range)
-
-    #views = get_user_tags_from_db(client, cookie, 'view', limit, times)
-    #buys = get_user_tags_from_db(client, cookie, 'buy', limit, times)
-
-    #response.status_code = 200
-    #return {"cookie": cookie, "views": views, "buys": buys}
+    return {"cookie": cookie, "views": views, "buys": buys}
 
 
 class Dupa(BaseModel):

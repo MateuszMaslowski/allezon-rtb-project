@@ -17,7 +17,9 @@ import random
 
 import operator
 
-date_time_rgx = "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z"
+utc_date_time_rgx = "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z"
+
+date_time_rgx = "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:(\d{2}|\d{2}.\d{3})"
 time_range_rgx = date_time_rgx + "_" + date_time_rgx
 
 hostIP = '10.112.135.103'
@@ -52,7 +54,7 @@ class ProductInfo(BaseModel):
 
 
 class UserTags(BaseModel):
-    time: str = Field(regex="^(" + date_time_rgx + ")$")
+    time: str = Field(regex="^(" + utc_date_time_rgx + ")$")
     cookie: str = Field(min_length=1)
     country: str = Field(min_length=1)
     device: str = Field(regex="^(PC|MOBILE|TV)$")
@@ -103,7 +105,7 @@ async def add_user_tag(user_tag: UserTags, response: Response):
 #    return
 
 @app.post('/user_profiles/{cookie}')
-async def get_user_tags(cookie: str = Query(min_length=1), time_range: str = Query(regex="^(" + time_range_rgx + ")$"), limit: int = Query(ge=1, lt=201), response: Response= 200):
+async def get_user_tags(cookie: str = Query(min_length=1), time_range: str = Query(regex="^(" + time_range_rgx + ")$"), response: Response= 200):
     print('chuj muj')
     print(cookie, time_range, limit)
     response.status_code = 200

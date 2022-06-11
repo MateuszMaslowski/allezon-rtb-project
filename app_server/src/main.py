@@ -35,10 +35,9 @@ read_policies = {'total_timeout': 1500, 'max_retries': 1}
 policies = {'write': write_policies, 'read': read_policies}
 config['policies'] = policies
 
+# print(client.is_connected())
 
-print(client.is_connected())
-
-create_indexes(client)
+create_indexes(config)
 
 app = FastAPI()
 
@@ -89,7 +88,7 @@ async def add_user_tag(user_tag: UserTags, response: Response):
     client = aerospike.client(config)
 
     client.connect()
-    
+
     primary_key = user_tag.cookie + user_tag.time + str(random.randint(1, 10000))
 
     key = ('mimuw', set, primary_key)

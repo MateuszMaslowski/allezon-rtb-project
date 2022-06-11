@@ -2,7 +2,11 @@ import aerospike
 from aerospike import exception as ex
 
 
-def create_indexes(client):
+def create_indexes(config):
+    client = aerospike.client(config)
+
+    client.connect()
+
     try:
         client.index_integer_create("mimuw", "view", "cookie", "mimuw_view_cookie_idx")
     except ex.IndexFoundError:
@@ -22,3 +26,5 @@ def create_indexes(client):
         client.index_integer_create("mimuw", "buy", "time", "mimuw_buy_time_idx")
     except ex.IndexFoundError:
         pass
+
+    client.close()

@@ -16,7 +16,8 @@ def get_user_tags_from_db(client, cookie, action, limit, times):
 
     # aerospike.predicates.between('time', times[0], times[1])
 
-    print(query.results())
+    # (key, meta, user_tags)
+    user_tags_extended = query.results()
     return {'chuj': 'dupa'}
     return user_tags
 

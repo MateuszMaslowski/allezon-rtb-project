@@ -27,11 +27,7 @@ if random.randint(0, 1) == 1:
 config = {
     'hosts': [
         (hostIP, 3000)
-    ],
-    'policies': {
-        'login_timeout_ms': 10000
-    },
-    'connect_timeout': 1000
+    ]
 }
 
 client = aerospike.client(config)

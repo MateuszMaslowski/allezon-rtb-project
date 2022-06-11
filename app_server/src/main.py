@@ -97,15 +97,16 @@ async def add_user_tag(user_tag: UserTags, response: Response):
     response.status_code = 204
     return
 
-@app.post('/user_profiles/{cookie}')
-async def get_user_tags(cookie : str, response: Response):
+@app.post('/user_profiles/{cookie}?time_range={time_range}')
+async def get_user_tags(cookie : str, time_range : str):
     response.status_code = 204
     return
 
 #@app.post('/user_profiles/{cookie}?time_range={time_range}&limit={limit}')
 #async def get_user_tags(cookie: str = Field(min_length=1),
 #                        time_range: str = Field(regex="^(" + time_range_rgx + ")$"),
-#                        limit: int = Field(ge=1, lt=201)):
+#                        limit: int = Field(ge=1, lt=201),
+#                        response: Response):
 #    print('chuj muj')
 #    if not client.is_connected():
 #        client.connect()

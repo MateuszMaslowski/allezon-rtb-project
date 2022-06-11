@@ -83,10 +83,10 @@ async def add_user_tag(user_tag: UserTags, response: Response):
         (key, metadata, bins) = client.get(key)
         no = bins['no']
         key = ('mimuw', 'cookies_' + set, user_tag.cookie)
-        client.put(key, {'no', (no + 1) % 200})
+        client.put(key, {'no': (no + 1) % 200})
     except ex.RecordNotFound:
         no = 0
-        client.put(key, {'no', no + 1})
+        client.put(key, {'no': no + 1})
 
     primary_key = user_tag.cookie + str(no)
 

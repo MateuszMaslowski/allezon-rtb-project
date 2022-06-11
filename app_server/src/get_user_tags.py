@@ -23,9 +23,9 @@ def get_user_tags_from_db(client, cookie, action, limit, times):
     n = len(user_tags)
     res = []
     while l < limit and l < n:
-        if times[1] < user_tags:
+        if times[1] < user_tags[l]:
             l += 1
-        elif times[0] > user_tags:
+        elif times[0] > user_tags[l]:
             break
         else:
             res.append(user_tags[l])

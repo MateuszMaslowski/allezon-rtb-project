@@ -28,8 +28,9 @@ config = {
         (hostIP, 3000)
     ],
     'policies': {
-        'timeout': 10000
-    }
+        'login_timeout_ms': 10000
+    },
+    'connect_timeout': 10000
 }
 
 client = aerospike.client(config)

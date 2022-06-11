@@ -97,27 +97,27 @@ async def add_user_tag(user_tag: UserTags, response: Response):
     response.status_code = 204
     return
 
-@app.post('/user_profiles/{cookie}?time_range={time_range}')
-async def get_user_tags(cookie : str, time_range : str):
-    response.status_code = 204
-    return
+#@app.post('/user_profiles/{cookie}?time_range={time_range}')
+#async def get_user_tags(cookie : str, time_range : str):
+#    response.status_code = 204
+#    return
 
-#@app.post('/user_profiles/{cookie}?time_range={time_range}&limit={limit}')
-#async def get_user_tags(cookie: str = Field(min_length=1),
-#                        time_range: str = Field(regex="^(" + time_range_rgx + ")$"),
-#                        limit: int = Field(ge=1, lt=201),
-#                        response: Response):
-#    print('chuj muj')
-#    if not client.is_connected():
-#        client.connect()
-#
-#    times = re.split('_', time_range)
-#
-#    views = get_user_tags_from_db(client, cookie, 'view', limit, times)
-#    buys = get_user_tags_from_db(client, cookie, 'buy', limit, times)
-#
-#    response.status_code = 200
-#    return {"cookie": cookie, "views": views, "buys": buys}
+@app.post('/user_profiles/{cookie}?time_range={time_range}&limit={limit}')
+async def get_user_tags(cookie: str = Field(min_length=1),
+                        time_range: str = Field(regex="^(" + time_range_rgx + ")$"),
+                        limit: int = Field(ge=1, lt=201),
+                        response: Response):
+    print('chuj muj')
+    if not client.is_connected():
+        client.connect()
+
+    times = re.split('_', time_range)
+
+    views = get_user_tags_from_db(client, cookie, 'view', limit, times)
+    buys = get_user_tags_from_db(client, cookie, 'buy', limit, times)
+
+    response.status_code = 200
+    return {"cookie": cookie, "views": views, "buys": buys}
 
 
 class Dupa(BaseModel):

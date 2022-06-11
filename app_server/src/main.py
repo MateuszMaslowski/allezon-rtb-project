@@ -80,12 +80,13 @@ async def add_user_tag(user_tag: UserTags, response: Response):
     key = ('mimuw', 'cookies_' + set, user_tag.cookie)
 
     try:
-        (key, metadata, no) = client.get(key)
+        (key, metadata, bins) = client.get(key)
+        no = bins['no']
         key = ('mimuw', 'cookies_' + set, user_tag.cookie)
-        client.put(key, (no + 1) % 200)
+        client.put(key, {'no', (no + 1) % 200})
     except ex.RecordNotFound:
         no = 0
-        client.put(key, no + 1)
+        client.put(key, {'no', no + 1})
 
     primary_key = user_tag.cookie + str(no)
 
@@ -122,4 +123,4 @@ async def cipa(body: Dupa, response: Response):
     response.status_code = 204
     print("View", body)
 
-# curl -X POST -H "Content-Type: application/json" -d '{"time": "2022-03-22T12:15:00.000Z", "cookie": "kuki", "country": "PL", "device": "PC", "action": "VIEW", "origin": "US", "product_info": {"product_id": "2137", "brand_id": "balenciaga", "category_id": "566", "price": 33}}' st135vm101.rtb-lab.pl:8000/user_tags/buy
+# curl -X POST -H "Content-Type: application/json" -d '{"time": "2022-03-22T12:15:00.000Z", "cookie": "kuki", "country": "PL", "device": "PC", "action": "VIEW", "origin": "US", "product_info": {"product_id": "2137", "brand_id": "balenciaga", "category_id": "566", "price": 33}}' st135vm101.rtb-lab.pl:8000/user_tags

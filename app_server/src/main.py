@@ -9,9 +9,9 @@ import json
 from get_user_tags import get_user_tags_from_db
 
 from create_indexes import create_indexes
-from aerospike import exception as ex
 
 import aerospike
+from aerospike import exception as ex
 import random
 
 import operator

@@ -1,8 +1,42 @@
 from fastapi import FastAPI, Response, HTTPException
 from pydantic import BaseModel, Field
+import re
 from typing import Union
 
+import hashlib
+import json
+
+from get_user_tags import get_user_tags_from_db
+
+from create_indexes import create_indexes
+from aerospike import exception as ex
+
+import aerospike
+import random
+
 import operator
+
+date_time_rgx = "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z"
+time_range_rgx = date_time_rgx + "_" + date_time_rgx
+
+hostIP = '10.112.135.103'
+if random.randint(0, 1) == 1:
+    hostIP = '10.112.135.104'
+
+config = {
+    'hosts': [
+        (hostIP, 3000)
+    ],
+    'policies': {
+        'timeout': 10000
+    }
+}
+
+client = aerospike.client(config)
+
+client.connect()
+
+create_indexes(client)
 
 app = FastAPI()
 
@@ -15,7 +49,7 @@ class ProductInfo(BaseModel):
 
 
 class UserTags(BaseModel):
-    time: str = Field(regex="^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z)$")
+    time: str = Field(regex="^(" + date_time_rgx + ")$")
     cookie: str = Field(min_length=1)
     country: str = Field(min_length=1)
     device: str = Field(regex="^(PC|MOBILE|TV)$")
@@ -30,10 +64,50 @@ async def root():
 
 
 @app.post("/user_tags")
-async def add_view_tag(view: UserTags, response: Response):
+async def add_user_tag(user_tag: UserTags, response: Response):
+    print("UserTag", user_tag)
+
+    set = 'view'
+    if user_tag.action == 'BUY':
+        set = 'buy'
+
+    if not client.is_connected():
+        client.connect()
+
+    key = ('mimuw', 'cookies_' + set, user_tag.cookie)
+
+    try:
+        (key, metadata, no) = client.get(key)
+        key = ('mimuw', 'cookies_' + set, user_tag.cookie)
+        client.put(key, (no + 1) % 200)
+    except ex.RecordNotFound:
+        no = 0
+        client.put(key, no + 1)
+
+    primary_key = user_tag.cookie + str(no)
+
+    key = ('mimuw', set, primary_key)
+
+    client.put(key, user_tag)
+
     response.status_code = 204
-    print("View", view)
     return
+
+
+@app.post('/{cookie}?time_range={time_range}?limit={limit}')
+async def get_user_tags(cookie: str = Field(min_length=1),
+                        time_range: str = Field(regex="^(" + time_range_rgx + ")$"),
+                        limit: int = Field(ge=1, lt=201)):
+    if not client.is_connected():
+        client.connect()
+
+    times = re.split('_', time_range)
+
+    views = get_user_tags_from_db(client, cookie, 'view', limit, times)
+    buys = get_user_tags_from_db(client, cookie, 'buy', limit, times)
+
+    response.status_code = 200
+    return {"cookie": cookie, "views": views, "buys": buys}
 
 
 class Dupa(BaseModel):
@@ -45,5 +119,4 @@ async def cipa(body: Dupa, response: Response):
     response.status_code = 204
     print("View", body)
 
-#
 # curl -X POST -H "Content-Type: application/json" -d '{"time": "2022-03-22T12:15:00.000Z", "cookie": "kuki", "country": "PL", "device": "PC", "action": "VIEW", "origin": "US", "product_info": {"product_id": "2137", "brand_id": "balenciaga", "category_id": "566", "price": 33}}' st135vm101.rtb-lab.pl:8000/user_tags/buy

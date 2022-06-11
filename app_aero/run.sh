@@ -1,2 +1,5 @@
-sudo docker build -t app_aero $1
-sudo docker run --network=host --privileged app_aero
+sudo cp $1/aerospike.conf /etc/aerospike/
+sudo systemctl stop aerospike
+sudo systemctl start aerospike
+sudo systemctl status aerospike
+

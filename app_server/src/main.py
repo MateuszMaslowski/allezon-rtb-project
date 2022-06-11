@@ -111,9 +111,11 @@ async def get_user_tags(cookie: str = Query(min_length=1), time_range: str = Que
 
     times = re.split('_', time_range)
 
+    print('cipa')
     views = get_user_tags_from_db(client, cookie, 'view', limit, times)
     buys = get_user_tags_from_db(client, cookie, 'buy', limit, times)
 
+    print('chuj')
     response.status_code = 200
     return {"cookie": cookie, "views": views, "buys": buys}
 

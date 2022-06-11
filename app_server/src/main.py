@@ -102,6 +102,7 @@ async def add_user_tag(user_tag: UserTags, response: Response):
 async def get_user_tags(cookie: str = Field(min_length=1),
                         time_range: str = Field(regex="^(" + time_range_rgx + ")$"),
                         limit: int = Field(ge=1, lt=201)):
+    print('chuj muj')
     if not client.is_connected():
         client.connect()
 

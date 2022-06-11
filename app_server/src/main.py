@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Response, HTTPException
+from fastapi import FastAPI, Response, HTTPException, Query
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel, Field
 import re
@@ -103,7 +103,7 @@ async def add_user_tag(user_tag: UserTags, response: Response):
 #    return
 
 @app.post('/user_profiles/{cookie}')
-async def get_user_tags(cookie: str = Field(min_length=1), time_range: str = Field(regex="^(" + time_range_rgx + ")$"), limit: int = Field(ge=1, lt=201), response: Response= 200):
+async def get_user_tags(cookie: str = Query(min_length=1), time_range: str = Query(regex="^(" + time_range_rgx + ")$"), limit: int = Query(ge=1, lt=201), response: Response= 200):
     print('chuj muj')
     if not client.is_connected():
         client.connect()

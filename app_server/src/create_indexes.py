@@ -1,5 +1,5 @@
 import aerospike
-import aerospike.exception as ex
+from aerospike import exception as ex
 
 
 def create_indexes(client):

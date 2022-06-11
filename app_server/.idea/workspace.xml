@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9b258949-26cc-4a0c-8e12-194d59f85189" name="Default Changelist" comment="" />
+    <list default="true" id="9b258949-26cc-4a0c-8e12-194d59f85189" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/create_indexes.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/create_indexes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/get_user_tags.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/get_user_tags.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -50,7 +54,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1654945018085</updated>
-      <workItem from="1654945019667" duration="12305000" />
+      <workItem from="1654945019667" duration="13023000" />
     </task>
     <servers />
   </component>

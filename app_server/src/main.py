@@ -41,7 +41,7 @@ config['policies'] = policies
 client = aerospike.client(config)
 client.connect()
 
-create_indexes(client)
+# create_indexes(client)
 
 app = FastAPI()
 

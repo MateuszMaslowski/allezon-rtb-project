@@ -56,7 +56,7 @@ async def root():
     return {"message": "Hello World"}
 
 
-@app.post("/user_tag")
+@app.post("/user_tags")
 async def add_user_tag(user_tag: UserTags, response: Response):
     if user_tag.action == 'BUY':
         set = 'buy'

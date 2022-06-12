@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9b258949-26cc-4a0c-8e12-194d59f85189" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/../app_proc/src/sup.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/post_classes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dockerfile" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -55,6 +59,8 @@
       <updated>1654945018085</updated>
       <workItem from="1654945019667" duration="13346000" />
       <workItem from="1654984887267" duration="1394000" />
+      <workItem from="1655032725205" duration="338000" />
+      <workItem from="1655046002203" duration="4576000" />
     </task>
     <servers />
   </component>

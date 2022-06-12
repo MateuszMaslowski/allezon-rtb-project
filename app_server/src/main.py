@@ -44,9 +44,7 @@ client.connect()
 
 # create_indexes(client)
 
-producer = KafkaProducer(bootstrap_servers=['10.112.135.105:9092', '10.112.135.106:9092', '10.112.135.107:9092'],
-                         value_serializer=lambda x:
-                         dumps(x).encode('utf-8'))
+producer = KafkaProducer(bootstrap_servers=['10.112.135.105:9092', '10.112.135.106:9092', '10.112.135.107:9092'])
 
 app = FastAPI()
 
@@ -75,7 +73,7 @@ async def add_user_tag(user_tag: UserTags, response: Response):
 
     client.put(key, user_tag_json)
 
-    producer.send('cookie', value={'cookie': cookie, 'action': action, 'primary_key': primary_key})
+    producer.send('cookie', json.dumps({'cookie': cookie, 'action': action, 'primary_key': primary_key}).encode('utf-8'))
 
     response.status_code = 204
     return

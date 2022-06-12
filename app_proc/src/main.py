@@ -17,4 +17,5 @@ consumer = KafkaConsumer('cookie',
                          )
 
 for message in consumer:
-    maintain_aerospike(message.value['cookie'], message.value['action'], message.value['primary_key'])
+    msg = json.loads(message.value)
+    maintain_aerospike(msg['cookie'], msg['action'], msg['primary_key'])

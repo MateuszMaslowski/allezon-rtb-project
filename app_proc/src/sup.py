@@ -51,9 +51,9 @@ def maintain_aerospike(cookie, action, primary_key):
         new_no = (no + 1) % 200
         client.put(key, {'no': new_no})
         delete_user_tag(no, action, cookie)
-     except ex.RecordNotFound:
-         no = 0
-         client.put(key, {'no': 1})
+    except ex.RecordNotFound:
+        no = 0
+        client.put(key, {'no': 1})
 
     key = ('mimuw', action + '_indexed', cookie + '_number' + str(no))
 

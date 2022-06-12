@@ -56,14 +56,7 @@ async def root():
     return {"message": "Hello World"}
 
 
-@app.post("/user_tags")
-async def chuj_w_dupe(user_tag: UserTags, response: Response):
-    print('CHUJ', user_tag)
-    response.status_code = 204
-    return
-
-
-@app.post("/chuj_user_tag")
+@app.post("/user_tag")
 async def add_user_tag(user_tag: UserTags, response: Response):
     if user_tag.action == 'BUY':
         set = 'buy'

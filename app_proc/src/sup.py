@@ -17,6 +17,7 @@ config = {
     'hosts': [
         (hostIP, 3000)
     ],
+    'connect_timeout': 100000,
     'policy': {'key': aerospike.POLICY_KEY_SEND}
 }
 

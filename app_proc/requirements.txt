@@ -1,5 +1,3 @@
 aerospike
 kafka-python
 pandas
-time
-threading

@@ -126,6 +126,7 @@ def update_db():
             for (key, (count, sum)) in buckets.items():
                 if not client.is_connected():
                     client.connect()
+                print('chuj', key)
                 client.put(('mimuw', 'aggregate', key), {'count': count, 'sum': sum})
 
 

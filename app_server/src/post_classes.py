@@ -7,7 +7,7 @@ date_time_rgx = "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:(\d{2}|\d{2}.\d{3})"
 time_range_rgx = date_time_rgx + "_" + date_time_rgx
 
 
-class ProductInfo(BaseModel):
+class ProductInfo():
     product_id: str = Field(min_length=1)
     brand_id: str = Field(min_length=1)
     category_id: str = Field(min_length=1)

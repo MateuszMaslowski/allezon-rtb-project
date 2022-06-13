@@ -53,7 +53,22 @@ async def root():
 
 @app.post("/user_tags")
 async def add_user_tag(user_tag: UserTags, response: Response):
-    user_tag_json = json.dumps(user_tag).encode("utf-8")
+    user_tag_json = {
+        'time' : user_tag.time,
+        'cookie': user_tag.cookie,
+        'country': user_tag.country,
+        'device': user_tag.device,
+        'action': user_tag.action,
+        'origin': user_tag.origin,
+        'product_info': {
+            'product_id': user_tag.product_info.product_id,
+            'brand_id': user_tag.product_info.brand_id,
+            'category_id': user_tag.product_info.category_id,
+            'price': user_tag.product_info.price
+        }
+    }
+    
+    user_tag_str = json.dumps(user_tag_json).encode("utf-8")
 
     producer.send('user_tags_test', key=user_tag.cookie, value=user_tag_json)
 

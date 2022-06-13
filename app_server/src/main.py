@@ -12,6 +12,7 @@ from datetime import timedelta
 
 import json
 import random
+import re
 
 utc_date_time_rgx = "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z"
 
@@ -86,7 +87,7 @@ async def get_user_profile(cookie: str = Query(min_length=1),
         if len(new_actions) > limit:
             new_actions = new_actions[:limit]
         return new_actions
-        
+
     if not client.is_connected():
         client.connect()
 

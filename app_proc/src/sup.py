@@ -46,7 +46,7 @@ def proc_user_profile(user_tag):
         _, metadata, bins = client.get(key)
     except ex.RecordNotFound:
         user_profile = {'cookie': user_tag['cookie'], 'views': [], 'buys': []}
-        user_profile[user_profile['action'] + 's'].append(user_tag)
+        user_profile[user_tag['action'] + 's'].append(user_tag)
 
         client.put(key, user_profile)
         return

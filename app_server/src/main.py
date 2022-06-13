@@ -39,9 +39,7 @@ client.connect()
 
 # create_indexes(client)
 
-producer = KafkaProducer(bootstrap_servers=['10.112.135.105:9092', '10.112.135.106:9092', '10.112.135.107:9092'],
-                         value_serializer=lambda x:
-                         json.dumps(x).encode('utf-8'))
+producer = KafkaProducer(bootstrap_servers=['10.112.135.105:9092', '10.112.135.106:9092', '10.112.135.107:9092'])
 
 app = FastAPI()
 

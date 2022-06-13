@@ -108,26 +108,32 @@ def proc_aggregation(user_tag):
 
     keys = prep_keys(user_tag)
 
-    with lock:
-        for key in keys:
-            if key in buckets:
-                (count, sum) = buckets[key]
-            else:
-                (count, sum) = (0, 0)
-            buckets[key] = (count + 1, sum + user_tag['product_info']['price'])
+    lock.acquire()
+    for key in keys:
+        if key in buckets:
+            (count, sum) = buckets[key]
+        else:
+            (count, sum) = (0, 0)
+        buckets[key] = (count + 1, sum + user_tag['product_info']['price'])
+
+    lock.release()
 
 
 def update_db():
     global lock, buckets
     while True:
+        print('prespanko')
         sleep(15)
-        with lock:
-            if not client.is_connected():
-                client.connect()
-            for (key, (count, sum)) in buckets.items():
-                print('kluczCHUJ:', key, count, sum)
-                client.put(('mimuw', 'aggregate', key), {'count': count, 'sum': sum})
-            buckets = {}
+        print('pospanku')
+        lock.acquire()
+        if not client.is_connected():
+            client.connect()
+        for (key, (count, sum)) in buckets.items():
+            print('kluczCHUJ:', key, count, sum)
+            client.put(('mimuw', 'aggregate', key), {'count': count, 'sum': sum})
+        buckets = {}
+
+        lock.release()
 
 
 Thread(target=update_db).start()

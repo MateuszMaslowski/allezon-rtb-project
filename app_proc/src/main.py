@@ -20,6 +20,7 @@ consumer = KafkaConsumer('user_tags_test',
 
 
 for message in consumer:
+    print('rucham kota')
     user_tag = json.loads(message.value)
     proc_user_profile(user_tag)
     proc_aggregation(user_tag)

@@ -42,6 +42,11 @@ def proc_user_profile(user_tag):
 
     key = ('mimuw', 'user_profiles', user_tag['cookie'])
 
+    if user_tag['action'] == 'VIEW':
+        user_tag['action'] = 'view'
+    else:
+        user_tag['action'] = 'buy'
+
     try:
         _, metadata, bins = client.get(key)
     except ex.RecordNotFound:

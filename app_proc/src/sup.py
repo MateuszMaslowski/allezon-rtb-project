@@ -37,9 +37,6 @@ def extract_time(json):
 
 
 def proc_user_profile(user_tag):
-    if not client.is_connected():
-        client.connect()
-
     key = ('mimuw', 'user_profiles', user_tag['cookie'])
 
     if user_tag['action'] == 'VIEW':
@@ -47,12 +44,17 @@ def proc_user_profile(user_tag):
     else:
         user_tag['action'] = 'buy'
 
+    if not client.is_connected():
+        client.connect()
+
     try:
         _, metadata, bins = client.get(key)
     except ex.RecordNotFound:
         user_profile = {'cookie': user_tag['cookie'], 'views': [], 'buys': []}
         user_profile[user_tag['action'] + 's'].append(user_tag)
 
+        if not client.is_connected():
+            client.connect()
         client.put(key, {'user_profile': user_profile})
         return
 
@@ -122,6 +124,8 @@ def update_db():
         sleep(15)
         with lock:
             for (key, (count, sum)) in buckets.items():
+                if not client.is_connected():
+                    client.connect()
                 client.put(('mimuw', 'aggregate', key), {'count': count, 'sum': sum})
 
 

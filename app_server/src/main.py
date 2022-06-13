@@ -78,6 +78,16 @@ async def add_user_tag(user_tag: UserTags, response: Response):
 async def get_user_profile(cookie: str = Query(min_length=1),
                            time_range: str = Query(regex="^(" + time_range_rgx + ")$"), limit: int = 200,
                            response: Response = 200):
+        def trim_time(actions, times, limit):
+            new_actions = []
+            for action in actions:
+                if times[0] <= action['time'] < times[1]:
+                    new_actions.append(action)
+            if len(new_actions) > limit:
+                new_actions = new_actions[:limit]
+
+            return new_actions
+
     if not client.is_connected():
         client.connect()
 
@@ -91,11 +101,8 @@ async def get_user_profile(cookie: str = Query(min_length=1),
 
     user_profile = bins['user_profile']
 
-    if len(user_profile.views) > limit:
-        user_profile.views = user_profile[:limit]
-
-    if len(user_profile.buys) > limit:
-        user_profile.buys = user_profile[:limit]
+    user_profile['views'] = trim_time(user_profile['views'], times, limit)
+    user_profile['buys'] = trim_time(user_profile['buys'], times, limit)
 
     user_profile['cookie'] = cookie
 

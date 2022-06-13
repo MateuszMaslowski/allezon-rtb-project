@@ -106,9 +106,13 @@ def proc_aggregation(user_tag):
 
     keys = prep_keys(user_tag)
 
+    print('du[a')
     with lock:
         for key in keys:
-            (count, sum) = buckets[key]
+            if key in buckets:
+                (count, sum) = buckets[key]
+            else:
+                (count, sum) = (0, 0)
             buckets[key] = (count + 1, sum + user_tag['product_info']['price'])
 
 

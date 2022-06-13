@@ -45,7 +45,7 @@ def proc_user_profile(user_tag):
     try:
         _, metadata, bins = client.get(key)
     except ex.RecordNotFound:
-        user_profile = {'cookie': user_tag.cookie, 'views': [], 'buys': []}
+        user_profile = {'cookie': user_tag['cookie'], 'views': [], 'buys': []}
         user_profile[user_profile.action + 's'].append(user_tag)
 
         client.put(key, user_profile)
@@ -53,7 +53,7 @@ def proc_user_profile(user_tag):
 
     user_profile = bins['user_profile']
 
-    actions = user_tag.action + 's'
+    actions = user_tag['action'] + 's'
     user_profile[actions].append(user_tag)
     user_profile[actions].sort(key=extract_time, reverse=True)
 
@@ -79,19 +79,19 @@ lock = Lock()
 def proc_aggregation(user_tag):
     def prep_keys(user_tag):
         # let's start with time
-        pref_key = pd.to_datetime(user_tag.time)
+        pref_key = pd.to_datetime(user_tag['time'])
         pref_key = pref_key.strftime("%Y-%m-%dT%H:%M:00")
 
-        pref_key += "?action=" + user_tag.action
+        pref_key += "?action=" + user_tag['action']
         return [
             pref_key,
-            pref_key + "&origin=" + user_tag.origin,
-            pref_key + "&origin=" + user_tag.origin + "&brand_id=" + user_tag.product_info.brand_id,
-            pref_key + "&origin=" + user_tag.origin + "&brand_id=" + user_tag.product_info.brand_id + "&category_id=" + user_tag.product_info.category_id,
-            pref_key + "&origin=" + user_tag.origin + "&category_id=" + user_tag.product_info.category_id,
-            pref_key + "&brand_id=" + user_tag.product_info.brand_id,
-            pref_key + "&brand_id=" + user_tag.product_info.brand_id + "&category_id=" + user_tag.product_info.category_id,
-            pref_key + "&category_id=" + user_tag.product_info.category_id
+            pref_key + "&origin=" + user_tag['origin'],
+            pref_key + "&origin=" + user_tag['origin'] + "&brand_id=" + user_tag['product_info']['brand_id'],
+            pref_key + "&origin=" + user_tag['origin'] + "&brand_id=" + user_tag['product_info']['brand_id'] + "&category_id=" + user_tag['product_info']['category_id'],
+            pref_key + "&origin=" + user_tag['origin'] + "&category_id=" + user_tag['product_info']['category_id'],
+            pref_key + "&brand_id=" + user_tag['product_info']['brand_id'],
+            pref_key + "&brand_id=" + user_tag['product_info']['brand_id'] + "&category_id=" + user_tag['product_info']['category_id'],
+            pref_key + "&category_id=" + user_tag['product_info']['category_id']
         ]
 
     if not client.is_connected():
@@ -104,7 +104,7 @@ def proc_aggregation(user_tag):
     with lock:
         for key in keys:
             (count, sum) = buckets[key]
-            buckets[key] = (count + 1, sum + user_tag.product_info.price)
+            buckets[key] = (count + 1, sum + user_tag['product_info']['price'])
 
 
 def update_db():

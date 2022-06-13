@@ -1,27 +1,17 @@
 from fastapi import FastAPI, Response, HTTPException, Query
-from fastapi.encoders import jsonable_encoder
-from pydantic import BaseModel, Field
 
-from get_user_tags import get_user_tags_from_db
-from create_indexes import create_indexes
 from post_classes import ProductInfo, UserTags, AggregateQuery
 
 import aerospike
 from aerospike import exception as ex
 
 from kafka import KafkaProducer
-from kafka import KafkaConsumer
 
-import operator
-import re
-import random
-import hashlib
+import pandas as pd
+from datetime import timedelta
+
 import json
 
-utc_date_time_rgx = "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z"
-
-date_time_rgx = "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:(\d{2}|\d{2}.\d{3})"
-time_range_rgx = date_time_rgx + "_" + date_time_rgx
 
 hostIP = '10.112.135.103'
 if random.randint(0, 1) == 1:
@@ -34,7 +24,7 @@ config = {
 }
 
 write_policies = {'total_timeout': 2000, 'max_retries': 1}
-read_policies = {'total_timeout': 1500, 'max_retries': 4}
+read_policies = {'total_timeout': 2000, 'max_retries': 2}
 policies = {'write': write_policies, 'read': read_policies}
 config['policies'] = policies
 
@@ -58,48 +48,99 @@ async def root():
 
 @app.post("/user_tags")
 async def add_user_tag(user_tag: UserTags, response: Response):
-    if user_tag.action == 'BUY':
-        set = 'buy'
-    else:
-        set = 'view'
+    user_tag_json = json.dumps(user_tag).encode("utf-8")
 
-    if not client.is_connected():
-        client.connect()
-
-    user_tag_json = jsonable_encoder(user_tag)
-
-    primary_key = json.dumps(user_tag_json, sort_keys=True).encode("utf-8")
-    primary_key = hashlib.md5(primary_key).hexdigest()
-
-    key = ('mimuw', set, primary_key)
-
-    client.put(key, user_tag_json)
-
-    producer.send('cookie', value={'cookie': user_tag.cookie, 'action': user_tag.action, 'primary_key': primary_key})
+    producer.send('user_tags_test', key=user_tag.cookie, value=user_tag_json)
 
     response.status_code = 204
     return
 
 
 @app.post('/user_profiles/{cookie}')
-async def get_user_tags(cookie: str = Query(min_length=1), time_range: str = Query(regex="^(" + time_range_rgx + ")$"), limit : int = 200, response: Response= 200):
+async def get_user_profile(cookie: str = Query(min_length=1),
+                           time_range: str = Query(regex="^(" + time_range_rgx + ")$"), limit: int = 200,
+                           response: Response = 200):
     if not client.is_connected():
         client.connect()
 
     times = re.split('_', time_range)
 
-    views = get_user_tags_from_db(client, cookie, 'view', limit, times)
-    buys = get_user_tags_from_db(client, cookie, 'buy', limit, times)
+    (key, metadata, bins) = client.get(('mimuw', 'user_profiles', cookie))
+
+    user_profile = bins['user_profile']
+
+    if len(user_profile.views) > limit:
+        user_profile.views = user_profile[:limit]
+
+    if len(user_profile.buys) > limit:
+        user_profile.buys = user_profile[:limit]
+
+    user_profile['cookie'] = cookie
 
     response.status_code = 200
-    return {"cookie": cookie, "views": views, "buys": buys}
+    return user_profile
 
 
 @app.post('/aggregates')
 async def get_aggregates(aggregate_query: AggregateQuery, response: Response = 200):
-    # TODO: Kafka
+    res = {
+        'colums': ["1m_bucket", "action"],
+        'rows': []
+    }
+
+    default_rows = []
+
+    if not client.is_connected():
+        client.connect()
+
+    suf_key = "?action=" + aggregate_query.action
+    default_rows.append(aggregate_query.action)
+
+    if not aggregate_query.origin is None:
+        pkey_params = "&origin=" + aggregate_query.origin
+        res['colums'].append("origin")
+        default_rows.append(aggregate_query.origin)
+
+    if not aggregate_query.brand_id is None:
+        pkey_params = "&brand_id=" + aggregate_query.brand_id
+        res['colums'].append("brand_id")
+        default_rows.append(aggregate_query.brand_id)
+
+    if not aggregate_query.category_id is None:
+        pkey_params = "&category_id=" + aggregate_query.category_id
+        res['colums'].append("category_id")
+        default_rows.append(aggregate_query.category_id)
+
+    times_str = re.split('_', aggregate_query.time_range)
+
+    b_time = pd.to_datetime(times_str[0])
+    e_time = pd.to_datetime(times_str[1])
+
+    for aggregates in aggregate_query.aggregates:
+        if aggregates == 'COUNT' or aggregates == 'count' or aggregates == 'Count':
+            res['colums'].append('count')
+        else:
+            res['colums'].append('sum_price')
+
+    while b_time != e_time:
+        pref_key = b_time.strftime("%Y-%m-%dT%H:%M:%S")
+
+        (key, metadata, bins) = client.get(('mimuw', 'aggregate', pref_key + suf_key))
+
+        m_res = [pref_key] + default_rows
+
+        for aggregates in aggregate_query.aggregates:
+            if aggregates == 'COUNT' or aggregates == 'count' or aggregates == 'Count':
+                m_res.append(bins['count'])
+            else:
+                m_res.append(bins['sum'])
+
+        res['rows'].append(m_res)
+
+        b_time = b_time + timedelta(minutes=1)
+
     response.status_code = 200
-    return # TODO: add return
+    return res
 
 # curl -X POST -H "Content-Type: application/json" -d '{"time": "2022-03-22T12:15:00.000Z", "cookie": "kuki", "country": "PL", "device": "PC", "action": "VIEW", "origin": "US", "product_info": {"product_id": "2137", "brand_id": "balenciaga", "category_id": "566", "price": 33}}' st135vm101.rtb-lab.pl:8000/user_tags
 

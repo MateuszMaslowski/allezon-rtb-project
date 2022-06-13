@@ -1,7 +1,13 @@
 import aerospike
 from aerospike import exception as ex
+from aerospike_helpers.operations import operations as op_helpers
+
+import pandas as pd
 
 import random
+
+from time import sleep
+from threading import Thread, Lock
 
 hostIP = '10.112.135.103'
 if random.randint(0, 1) == 1:
@@ -10,7 +16,8 @@ if random.randint(0, 1) == 1:
 config = {
     'hosts': [
         (hostIP, 3000)
-    ]
+    ],
+    'policy': {'key': aerospike.POLICY_KEY_SEND}
 }
 
 write_policies = {'total_timeout': 20000, 'max_retries': 1}
@@ -22,39 +29,83 @@ client = aerospike.client(config)
 client.connect()
 
 
-def delete_user_tag(no, action, cookie):
-    key = ('mimuw', action + '_indexed', cookie + '_number' + str(no))
-
+def extract_time(json):
     try:
-        (key, metadata, bins) = client.get(key)
-
-        primary_key = bins['primary_key']
-        key = ('mimuw', action, primary_key)
-
-        client.remove(key)
-    except ex.RecordNotFound:
-        pass
+        return json['time']
+    except KeyError:
+        return 0
 
 
-def maintain_aerospike(cookie, action, primary_key):
+def proc_user_profile(user_tag):
     if not client.is_connected():
         client.connect()
 
-    set_number = action + '_number'
+    key = ('mimuw', 'user_profiles', user_tag['cookie'])
 
-    key = ('mimuw', set_number, cookie)
+    _, metadata, bins = client.get(key)
+
+    user_profile = bins['user_profile']
+
+    user_profile[user_tag.action].append(user_tag)
+    user_profile[user_tag.action].sort(key=extract_time, reverse=True)
+
+    if len(user_profile[user_tag.action]) > 200:
+        user_profile[user_tag.action] = user_profile[user_tag.action][:200]
+
+    read_gen = metadata['gen']
+    write_policy = {'gen': aerospike.POLICY_GEN_EQ}
+    ops = [op_helpers.write('user_profile', user_profile),
+           op_helpers.read('user_profile')]
 
     try:
-        (key, metadata, bins) = client.get(key)
-        no = bins['no']
-        key = ('mimuw', set_number, cookie)
-        new_no = (no + 1) % 200
-        client.put(key, {'no': new_no})
-        delete_user_tag(no, action, cookie)
-    except ex.RecordNotFound:
-        no = 0
-        client.put(key, {'no': 1})
+        _, metadata, bins = client.operate(key, ops, meta={'gen': read_gen}, policy=write_policy)
+    except ex.RecordGenerationError as e:
+        proc_user_profile(user_tag)
 
-    key = ('mimuw', action + '_indexed', cookie + '_number' + str(no))
 
-    client.put(key, {'primary_key': primary_key})
+buckets = {}
+
+lock = Lock()
+
+
+def proc_aggregation(user_tag):
+    def prep_keys(user_tag):
+        # let's start with time
+        pref_key = pd.to_datetime(user_tag.time)
+        pref_key = pref_key.strftime("%Y-%m-%dT%H:%M:00")
+
+        pref_key += "?action=" + user_tag.action
+        return [
+            pref_key,
+            pref_key + "&origin=" + user_tag.origin,
+            pref_key + "&origin=" + user_tag.origin + "&brand_id=" + user_tag.product_info.brand_id,
+            pref_key + "&origin=" + user_tag.origin + "&brand_id=" + user_tag.product_info.brand_id + "&category_id=" + user_tag.product_info.category_id,
+            pref_key + "&origin=" + user_tag.origin + "&category_id=" + user_tag.product_info.category_id,
+            pref_key + "&brand_id=" + user_tag.product_info.brand_id,
+            pref_key + "&brand_id=" + user_tag.product_info.brand_id + "&category_id=" + user_tag.product_info.category_id,
+            pref_key + "&category_id=" + user_tag.product_info.category_id
+        ]
+
+    if not client.is_connected():
+        client.connect()
+
+    global buckets, lock
+
+    keys = prep_keys(user_tag)
+
+    with lock:
+        for key in keys:
+            (count, sum) = buckets[key]
+            buckets[key] = (count + 1, sum + user_tag.product_info.price)
+
+
+def update_db():
+    global lock, buckets
+    while True:
+        sleep(15)
+        with lock:
+            for (key, (count, sum)) in buckets.items():
+                client.put(('mimuw', 'aggregate', key), {'count': count, 'sum': sum})
+
+
+Thread(target=update_db).start()

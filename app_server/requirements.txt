@@ -1,4 +1,5 @@
 fastapi
 uvicorn[standard]
 aerospike
+pandas
 kafka-python

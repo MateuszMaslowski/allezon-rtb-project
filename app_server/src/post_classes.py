@@ -31,4 +31,4 @@ class AggregateQuery(BaseModel):
     #origin: Union[str, None] = Field(default=None)
     #brand_id: Union[str, None] = Field(default=None)
     #category_id: Union[str, None] = Field(default=None)
-    aggregates: List[str] = Field(default=None)
+    #aggregates: List[str] = Field(default=None)

@@ -111,7 +111,7 @@ async def get_user_profile(cookie: str = Query(min_length=1),
 
 
 @app.post('/aggregates')
-async def get_aggregates(aggregate_query: AggregateQuery, response: Response = 200):
+async def get_aggregates(time_range: str = Query(regex="^(" + time_range_rgx + ")$"), action: str = Query(regex="^(VIEW|BUY)$"), origin: Union[str, None] = Query(default=None), brand_id: Union[str, None] = Query(default=None), category_id : Union[str, None] = Query(default=None), aggregates: List[str] = Query(default=None), response: Response = 200):
     res = {
         'colums': ["1m_bucket", "action"],
         'rows': []
@@ -122,31 +122,31 @@ async def get_aggregates(aggregate_query: AggregateQuery, response: Response = 2
     if not client.is_connected():
         client.connect()
 
-    suf_key = "?action=" + aggregate_query.action
-    default_rows.append(aggregate_query.action)
+    suf_key = "?action=" + action
+    default_rows.append(action)
 
-    if not aggregate_query.origin is None:
-        pkey_params = "&origin=" + aggregate_query.origin
+    if not origin is None:
+        pkey_params = "&origin=" + origin
         res['colums'].append("origin")
-        default_rows.append(aggregate_query.origin)
+        default_rows.append(origin)
 
-    if not aggregate_query.brand_id is None:
-        pkey_params = "&brand_id=" + aggregate_query.brand_id
+    if not brand_id is None:
+        pkey_params = "&brand_id=" + brand_id
         res['colums'].append("brand_id")
-        default_rows.append(aggregate_query.brand_id)
+        default_rows.append(brand_id)
 
-    if not aggregate_query.category_id is None:
-        pkey_params = "&category_id=" + aggregate_query.category_id
+    if not category_id is None:
+        pkey_params = "&category_id=" + category_id
         res['colums'].append("category_id")
-        default_rows.append(aggregate_query.category_id)
+        default_rows.append(category_id)
 
-    times_str = re.split('_', aggregate_query.time_range)
+    times_str = re.split('_', time_range)
 
     b_time = pd.to_datetime(times_str[0])
     e_time = pd.to_datetime(times_str[1])
 
-    for aggregates in aggregate_query.aggregates:
-        if aggregates == 'COUNT' or aggregates == 'count' or aggregates == 'Count':
+    for aggregate in aggregates:
+        if aggregate == 'COUNT' or aggregate == 'count' or aggregate == 'Count':
             res['colums'].append('count')
         else:
             res['colums'].append('sum_price')
@@ -159,13 +159,13 @@ async def get_aggregates(aggregate_query: AggregateQuery, response: Response = 2
         try:
             (key, metadata, bins) = client.get(('mimuw', 'aggregate', pref_key + suf_key))
 
-            for aggregates in aggregate_query.aggregates:
-                if aggregates == 'COUNT' or aggregates == 'count' or aggregates == 'Count':
+            for aggregate in aggregates:
+                if aggregate == 'COUNT' or aggregate == 'count' or aggregate == 'Count':
                     m_res.append(bins['count'])
                 else:
                     m_res.append(bins['sum'])
         except ex.RecordNotFound:
-            for _ in range(len(aggregate_query)):
+            for _ in range(len(aggregates)):
                 m_res.append(0)
 
         res['rows'].append(m_res)
@@ -179,4 +179,4 @@ async def get_aggregates(aggregate_query: AggregateQuery, response: Response = 2
 
 # curl -X POST -H "Content-Type: application/json" http://10.112.135.101:8000/user_profiles/kuki?time_range=2022-03-22T12:15:00.000_2022-03-22T12:15:00.001&limit=20
 
-# curl -X POST -H "Content-Type: application/json" http://10.112.135.101:8000/aggregates?time_range=2022-03-22T12:15:00.000_2022-03-22T12:16:00.00&action=view&aggregates=sum&aggregates=count/
+# curl -X POST -H "Content-Type: application/json" http://10.112.135.101:8000/aggregates/?time_range=2022-03-22T12:15:00.000_2022-03-22T12:16:00.00&action=view&aggregates=sum&aggregates=count/

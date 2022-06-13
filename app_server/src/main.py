@@ -113,7 +113,13 @@ async def get_user_profile(cookie: str = Query(min_length=1),
 
 
 @app.post('/aggregates')
-async def get_aggregates(time_range: str = Query(regex="^(" + time_range_rgx + ")$"), action: str = Query(regex="^(VIEW|BUY)$"), origin: Union[str, None] = Query(default=None), brand_id: Union[str, None] = Query(default=None), category_id : Union[str, None] = Query(default=None), aggregates: List[str] = Query(default=None), response: Response = 200):
+async def get_aggregates(time_range: str = Query(regex="^(" + time_range_rgx + ")$"), 
+                         #action: str = Query(regex="^(VIEW|BUY)$"),
+                         origin: Union[str, None] = Query(default=None), 
+                         brand_id: Union[str, None] = Query(default=None), 
+                         category_id: Union[str, None] = Query(default=None), 
+                         aggregates: List[str] = Query(default=None), 
+                         response: Response = 200):
     res = {
         'colums': ["1m_bucket", "action"],
         'rows': []
@@ -181,4 +187,4 @@ async def get_aggregates(time_range: str = Query(regex="^(" + time_range_rgx + "
 
 # curl -X POST -H "Content-Type: application/json" http://10.112.135.101:8000/user_profiles/kuki?time_range=2022-03-22T12:15:00.000_2022-03-22T12:15:00.001&limit=20
 
-# curl -X POST -H "Content-Type: application/json" http://10.112.135.101:8000/aggregates/?time_range=2022-03-22T12:15:00.000_2022-03-22T12:16:00.00&action=view&aggregates=sum&aggregates=count/
+# curl -X POST -H "Content-Type: application/json" http://10.112.135.101:8000/aggregates?time_range=2022-03-22T12:15:00.000_2022-03-22T12:16:00.000&action=VIEW&aggregates=sum&aggregates=count/

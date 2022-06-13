@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Response, HTTPException, Query
 
-from post_classes import ProductInfo, UserTags, AggregateQuery
+from post_classes import ProductInfo, UserTags
 
 import aerospike
 from aerospike import exception as ex

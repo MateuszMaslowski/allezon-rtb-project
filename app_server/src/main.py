@@ -13,6 +13,10 @@ from datetime import timedelta
 import json
 import random
 
+utc_date_time_rgx = "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z"
+
+date_time_rgx = "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:(\d{2}|\d{2}.\d{3})"
+time_range_rgx = date_time_rgx + "_" + date_time_rgx
 
 hostIP = '10.112.135.103'
 if random.randint(0, 1) == 1:

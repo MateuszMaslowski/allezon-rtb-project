@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Response, HTTPException, Query
 
 from post_classes import ProductInfo, UserTags
+from typing import Union
 
 import aerospike
 from aerospike import exception as ex

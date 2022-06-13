@@ -28,7 +28,7 @@ class UserTags(BaseModel):
 class AggregateQuery(BaseModel):
     time_range: str = Field(regex="^(" + time_range_rgx + ")$")
     action: str = Field(regex="^(VIEW|BUY)$")
-    origin: Union[str, None] = Field(default=None)
-    brand_id: Union[str, None] = Field(default=None)
-    category_id: Union[str, None] = Field(default=None)
+    #origin: Union[str, None] = Field(default=None)
+    #brand_id: Union[str, None] = Field(default=None)
+    #category_id: Union[str, None] = Field(default=None)
     aggregates: List[str] = Field(default=None)

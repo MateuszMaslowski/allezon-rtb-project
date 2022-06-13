@@ -108,7 +108,6 @@ def proc_aggregation(user_tag):
 
     keys = prep_keys(user_tag)
 
-    print('du[a')
     with lock:
         for key in keys:
             if key in buckets:
@@ -126,8 +125,8 @@ def update_db():
             for (key, (count, sum)) in buckets.items():
                 if not client.is_connected():
                     client.connect()
-                print('chuj', key)
                 client.put(('mimuw', 'aggregate', key), {'count': count, 'sum': sum})
+            buckets = {}
 
 
 Thread(target=update_db).start()

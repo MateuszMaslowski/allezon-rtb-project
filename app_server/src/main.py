@@ -67,10 +67,10 @@ async def add_user_tag(user_tag: UserTags, response: Response):
             'price': user_tag.product_info.price
         }
     }
-    
+
     user_tag_str = json.dumps(user_tag_json).encode("utf-8")
 
-    producer.send('user_tags_test', key=user_tag.cookie, value=user_tag_json)
+    producer.send('user_tags_test', key=user_tag.cookie, value=user_tag_str)
 
     response.status_code = 204
     return

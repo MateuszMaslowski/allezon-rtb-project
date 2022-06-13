@@ -53,7 +53,7 @@ def proc_user_profile(user_tag):
         user_profile = {'cookie': user_tag['cookie'], 'views': [], 'buys': []}
         user_profile[user_tag['action'] + 's'].append(user_tag)
 
-        client.put(key, user_profile)
+        client.put(key, {'user_profile': user_profile})
         return
 
     user_profile = bins['user_profile']

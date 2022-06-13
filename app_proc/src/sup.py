@@ -42,15 +42,23 @@ def proc_user_profile(user_tag):
 
     key = ('mimuw', 'user_profiles', user_tag['cookie'])
 
-    _, metadata, bins = client.get(key)
+    try:
+        _, metadata, bins = client.get(key)
+    except ex.RecordNotFound:
+        user_profile = {'cookie': user_tag.cookie, 'views': [], 'buys': []}
+        user_profile[user_profile.action + 's'].append(user_tag)
+
+        client.put(key, user_profile)
+        return
 
     user_profile = bins['user_profile']
 
-    user_profile[user_tag.action].append(user_tag)
-    user_profile[user_tag.action].sort(key=extract_time, reverse=True)
+    actions = user_tag.action + 's'
+    user_profile[actions].append(user_tag)
+    user_profile[actions].sort(key=extract_time, reverse=True)
 
-    if len(user_profile[user_tag.action]) > 200:
-        user_profile[user_tag.action] = user_profile[user_tag.action][:200]
+    if len(user_profile[actions]) > 200:
+        user_profile[actions] = user_profile[actions][:200]
 
     read_gen = metadata['gen']
     write_policy = {'gen': aerospike.POLICY_GEN_EQ}

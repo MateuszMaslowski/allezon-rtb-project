@@ -82,8 +82,12 @@ async def get_user_profile(cookie: str = Query(min_length=1),
         client.connect()
 
     times = re.split('_', time_range)
-
-    (key, metadata, bins) = client.get(('mimuw', 'user_profiles', cookie))
+    
+    try:
+        (key, metadata, bins) = client.get(('mimuw', 'user_profiles', cookie))
+    except ex.RecordNotFound:
+        response.status_code = 200
+        return {}
 
     user_profile = bins['user_profile']
 
@@ -142,16 +146,20 @@ async def get_aggregates(aggregate_query: AggregateQuery, response: Response = 2
 
     while b_time != e_time:
         pref_key = b_time.strftime("%Y-%m-%dT%H:%M:%S")
-
-        (key, metadata, bins) = client.get(('mimuw', 'aggregate', pref_key + suf_key))
-
+        
         m_res = [pref_key] + default_rows
+        
+        try:
+            (key, metadata, bins) = client.get(('mimuw', 'aggregate', pref_key + suf_key))
 
-        for aggregates in aggregate_query.aggregates:
-            if aggregates == 'COUNT' or aggregates == 'count' or aggregates == 'Count':
-                m_res.append(bins['count'])
-            else:
-                m_res.append(bins['sum'])
+            for aggregates in aggregate_query.aggregates:
+                if aggregates == 'COUNT' or aggregates == 'count' or aggregates == 'Count':
+                    m_res.append(bins['count'])
+                else:
+                    m_res.append(bins['sum'])
+        except ex.RecordNotFound:
+            for _ in range(len(aggregate_query)):
+                m_res.append(0)
 
         res['rows'].append(m_res)
 

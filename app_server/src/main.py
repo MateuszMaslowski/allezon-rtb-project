@@ -2,6 +2,7 @@ from fastapi import FastAPI, Response, HTTPException, Query
 
 from post_classes import ProductInfo, UserTags
 from typing import Union
+from typing import List
 
 import aerospike
 from aerospike import exception as ex

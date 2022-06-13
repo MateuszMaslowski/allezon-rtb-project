@@ -1,5 +1,4 @@
 from pydantic import BaseModel, Field
-from typing import List
 
 utc_date_time_rgx = "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z"
 

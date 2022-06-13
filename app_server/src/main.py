@@ -58,24 +58,23 @@ async def root():
 
 @app.post("/user_tags")
 async def add_user_tag(user_tag: UserTags, response: Response):
-    #if user_tag.action == 'BUY':
-    #    set = 'buy'
-    #else:
-    #    set = 'view'
+    if user_tag.action == 'BUY':
+        set = 'buy'
+    else:
+        set = 'view'
 
-    #if not client.is_connected():
-    #    client.connect()
+    if not client.is_connected():
+        client.connect()
 
-    #user_tag_json = jsonable_encoder(user_tag)
+    user_tag_json = jsonable_encoder(user_tag)
 
-    #primary_key = json.dumps(user_tag_json, sort_keys=True).encode("utf-8")
-    #primary_key = hashlib.md5(primary_key).hexdigest()
+    primary_key = json.dumps(user_tag_json, sort_keys=True).encode("utf-8")
+    primary_key = hashlib.md5(primary_key).hexdigest()
 
-    #key = ('mimuw', set, primary_key)
+    key = ('mimuw', set, primary_key)
 
-    #client.put(key, user_tag_json)
+    client.put(key, user_tag_json)
 
-    primary_key = 69
     producer.send('cookie', value={'cookie': user_tag.cookie, 'action': user_tag.action, 'primary_key': primary_key})
 
     response.status_code = 204

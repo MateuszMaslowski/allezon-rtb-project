@@ -122,9 +122,10 @@ def update_db():
     while True:
         sleep(15)
         with lock:
+            if not client.is_connected():
+                client.connect()
             for (key, (count, sum)) in buckets.items():
-                if not client.is_connected():
-                    client.connect()
+                print('kluczCHUJ:', key, count, sum)
                 client.put(('mimuw', 'aggregate', key), {'count': count, 'sum': sum})
             buckets = {}
 

@@ -79,7 +79,8 @@ async def add_user_tag(user_tag: UserTags, response: Response):
 
 @app.post('/user_profiles/{cookie}')
 async def get_user_profile(cookie: str = Query(min_length=1),
-                           time_range: str = Query(regex="^(" + time_range_rgx + ")$"), limit: int = 200,
+                           time_range: str = Query(regex="^(" + time_range_rgx + ")$"),
+                           limit: int = 200,
                            response: Response = 200):
     def trim_time(actions, times, limit):
         new_actions = []
@@ -183,8 +184,8 @@ async def get_aggregates(time_range: str = Query(regex="^(" + time_range_rgx + "
     response.status_code = 200
     return res
 
-# curl -X POST -H "Content-Type: application/json" -d '{"time": "2022-03-22T12:15:00.000Z", "cookie": "kuki", "country": "PL", "device": "PC", "action": "VIEW", "origin": "US", "product_info": {"product_id": "2137", "brand_id": "balenciaga", "category_id": "566", "price": 33}}' st135vm101.rtb-lab.pl:8000/user_tags
+# curl -X POST -H "Content-Type: application/json" -d '{"time": "2022-03-22T12:15:00.000Z", "cookie": "kuki2", "country": "PL", "device": "PC", "action": "VIEW", "origin": "US", "product_info": {"product_id": "2137", "brand_id": "balenciaga", "category_id": "566", "price": 33}}' st135vm101.rtb-lab.pl:8000/user_tags
 
-# curl -X POST -H "Content-Type: application/json" http://10.112.135.101:8000/user_profiles/kuki?time_range=2022-03-22T12:15:00.000_2022-03-22T12:15:00.001&limit=20
+# curl -X POST -H "Content-Type: application/json" 'http://10.112.135.101:8000/user_profiles/kuki?time_range=2022-03-22T12:15:00.000_2022-03-22T12:15:00.001&limit=20'
 
-# curl -X POST -H "Content-Type: application/json" http://10.112.135.101:8000/aggregates?time_range=2022-03-22T12:15:00.000_2022-03-22T12:16:00.000&action=VIEW&aggregates=sum&aggregates=count
+# curl -X POST -H "Content-Type: application/json" 'http://10.112.135.101:8000/aggregates?time_range=2022-03-22T12:15:00.000_2022-03-22T12:16:00.000&action=VIEW&aggregates=sum&aggregates=count'

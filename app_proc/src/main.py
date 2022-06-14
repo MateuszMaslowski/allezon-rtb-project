@@ -147,7 +147,7 @@ def update_db():
         lock.release()
 
 
-Thread(target=update_db).start()
+#Thread(target=update_db).start()
 
 consumer = KafkaConsumer('user_tags_test',
                          bootstrap_servers=['10.112.135.105:9092', '10.112.135.106:9092', '10.112.135.107:9092'],
@@ -161,7 +161,7 @@ for message in consumer:
     user_tag = json.loads(message.value)
     print(user_tag)
     proc_user_profile(user_tag)
-    proc_aggregation(user_tag)
+    #proc_aggregation(user_tag)
     #maintain_aerospike(msg['cookie'], msg['action'], msg['primary_key'])
 
 

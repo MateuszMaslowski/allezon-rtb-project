@@ -82,7 +82,6 @@ async def get_user_profile(cookie: str = Query(min_length=1),
                            time_range: str = Query(regex="^(" + time_range_rgx + ")$"),
                            limit: int = 200,
                            response: Response = 200):
-    print('chuj')
     def trim_time(actions, times, limit):
         print(actions)
         new_actions = []
@@ -99,12 +98,16 @@ async def get_user_profile(cookie: str = Query(min_length=1),
     times = re.split('_', time_range)
     
     try:
+        print('wagina')
         (key, metadata, bins) = client.get(('mimuw', 'user_profiles', cookie))
     except ex.RecordNotFound:
         response.status_code = 200
+        print('sikupa')
         return {}
 
     user_profile = bins['user_profile']
+
+    print('dziwota')
 
     user_profile['views'] = trim_time(user_profile['views'], times, limit)
     user_profile['buys'] = trim_time(user_profile['buys'], times, limit)

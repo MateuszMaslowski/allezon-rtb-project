@@ -133,14 +133,14 @@ def proc_aggregation(user_tag):
 def update_db():
     global lock, buckets
     while True:
-        #print('prespanko')
+        #print('pre-spanko')
         #sleep(15)
-        #print('pospanku')
+        #print('post-spanko')
         lock.acquire()
         if not client.is_connected():
             client.connect()
         for (key, (count, sum)) in buckets.items():
-            #print('kluczCHUJ:', key, count, sum)
+            #print('klucz:', key, count, sum)
             client.put(('mimuw', 'aggregate', key), {'count': count, 'sum': sum})
         buckets = {}
 
@@ -157,7 +157,6 @@ consumer = KafkaConsumer('user_tags_test',
                          #value_deserializer=lambda x: json.loads(x.decode('utf-8')
                           )
 
-#print('hujolbanga')
 for message in consumer:
     user_tag = json.loads(message.value)
     print(user_tag)

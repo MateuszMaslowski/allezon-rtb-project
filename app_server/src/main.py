@@ -100,16 +100,15 @@ async def get_user_profile(cookie: str = Query(min_length=1),
     times = re.split('_', time_range)
     
     try:
-        print('wagina')
         (key, metadata, bins) = client.get(('mimuw', 'user_profiles', cookie))
     except ex.RecordNotFound:
         response.status_code = 200
-        print('sikupa')
+        print('empty cookie')
         return {'cookie': cookie, 'views': [], 'buys': []}
 
     user_profile = bins['user_profile']
 
-    print('dziwota')
+    print('came here')
 
     user_profile['views'] = trim_time(user_profile['views'], times, limit)
     user_profile['buys'] = trim_time(user_profile['buys'], times, limit)

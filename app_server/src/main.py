@@ -82,6 +82,7 @@ async def get_user_profile(cookie: str = Query(min_length=1),
                            time_range: str = Query(regex="^(" + time_range_rgx + ")$"),
                            limit: int = 200,
                            response: Response = 200):
+    print('chuj')
     def trim_time(actions, times, limit):
         print(actions)
         new_actions = []

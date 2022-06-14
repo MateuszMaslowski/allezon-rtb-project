@@ -30,8 +30,10 @@ config = {
     'hosts': [
         (hostIP, 3000)
     ],
-    'connect_timeout': 100000,
-    'policy': {'key': aerospike.POLICY_KEY_SEND}
+    'policy': {
+        'key': aerospike.POLICY_KEY_SEND,
+        'total_timeout': 100000,
+    }
 }
 
 write_policies = {'total_timeout': 20000, 'max_retries': 1}

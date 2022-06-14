@@ -46,9 +46,9 @@ client = aerospike.client(config)
 client.connect()
 
 
-def extract_time(json):
+def extract_time(json_tag):
     try:
-        return json['time']
+        return json_tag['time']
     except KeyError:
         return 0
 
@@ -57,9 +57,9 @@ def proc_user_profile(user_tag):
     key = ('mimuw', 'user_profiles', user_tag['cookie'])
 
     if user_tag['action'] == 'VIEW':
-        user_tag['action'] = 'view'
+        actions = 'views'
     else:
-        user_tag['action'] = 'buy'
+        actions = 'buys'
 
     if not client.is_connected():
         client.connect()
@@ -68,7 +68,7 @@ def proc_user_profile(user_tag):
         _, metadata, bins = client.get(key)
     except ex.RecordNotFound:
         user_profile = {'cookie': user_tag['cookie'], 'views': [], 'buys': []}
-        user_profile[user_tag['action'] + 's'].append(user_tag)
+        user_profile[actions].append(user_tag)
 
         if not client.is_connected():
             client.connect()
@@ -77,7 +77,6 @@ def proc_user_profile(user_tag):
 
     user_profile = bins['user_profile']
 
-    actions = user_tag['action'] + 's'
     user_profile[actions].append(user_tag)
     user_profile[actions].sort(key=extract_time, reverse=True)
 

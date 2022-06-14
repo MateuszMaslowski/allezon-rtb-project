@@ -196,4 +196,4 @@ async def get_aggregates(time_range: str = Query(regex="^(" + time_range_rgx + "
 
 # curl -X POST -H "Content-Type: application/json" 'http://10.112.135.101:8000/aggregates?time_range=2022-03-22T12:15:00.000_2022-03-22T12:16:00.000&action=VIEW&aggregates=sum&aggregates=count'
 
-# curl -X POST -H "Content-Type: application/json" 'http://user_profiles/XkXWwGM0UqgJQvMndKBO?time_range=2022-03-01T00:00:00.074_2022-03-01T00:00:00.079&limit=200'
+# curl -X POST -H "Content-Type: application/json" 'http://10.112.135.101:8000/user_profiles/XkXWwGM0UqgJQvMndKBO?time_range=2022-03-01T00:00:00.074_2022-03-01T00:00:00.079&limit=200'

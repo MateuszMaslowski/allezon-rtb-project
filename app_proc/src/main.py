@@ -147,12 +147,12 @@ def update_db():
         lock.release()
 
 
-#Thread(target=update_db).start()
+Thread(target=update_db).start()
 
 consumer = KafkaConsumer('user_tags_test',
                          bootstrap_servers=['10.112.135.105:9092', '10.112.135.106:9092', '10.112.135.107:9092'],
                          auto_offset_reset='earliest',
-                         enable_auto_commit=True,
+                         #enable_auto_commit=True,
                          group_id='tag-group'
                          #value_deserializer=lambda x: json.loads(x.decode('utf-8')
                           )

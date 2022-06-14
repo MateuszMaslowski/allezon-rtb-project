@@ -36,9 +36,10 @@ config = {
     }
 }
 
-write_policies = {'total_timeout': 20000, 'max_retries': 1}
-read_policies = {'total_timeout': 15000, 'max_retries': 4}
-policies = {'write': write_policies, 'read': read_policies}
+write_policies = {'total_timeout': 35000, 'max_retries': 1}
+read_policies = {'total_timeout': 20000, 'max_retries': 3}
+operate_policies = {'total_timeout': 50000, 'max_retries': 3}
+policies = {'write': write_policies, 'read': read_policies, 'operate': operate_policies}
 config['policies'] = policies
 
 client = aerospike.client(config)

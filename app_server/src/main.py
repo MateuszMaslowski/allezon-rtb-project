@@ -69,6 +69,8 @@ async def add_user_tag(user_tag: UserTags, response: Response):
         }
     }
 
+    print(user_tag)
+    
     user_tag_str = json.dumps(user_tag_json).encode("utf-8")
 
     producer.send('user_tags_test', user_tag_str)
@@ -103,7 +105,7 @@ async def get_user_profile(cookie: str = Query(min_length=1),
     except ex.RecordNotFound:
         response.status_code = 200
         print('sikupa')
-        return {}
+        return {'cookie': cookie, 'views': [], 'buys': []}
 
     user_profile = bins['user_profile']
 

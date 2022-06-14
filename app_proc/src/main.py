@@ -31,7 +31,7 @@ config = {
         (hostIP, 3000)
     ],
     'policy': {
-        'key': aerospike.POLICY_KEY_SEND,
+        'key': aerospike.POLICY_COMMIT_LEVEL_MASTER,
         'total_timeout': 100000,
     }
 }

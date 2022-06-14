@@ -83,15 +83,16 @@ def proc_user_profile(user_tag):
     if len(user_profile[actions]) > 200:
         user_profile[actions] = user_profile[actions][:200]
 
-    read_gen = metadata['gen']
-    write_policy = {'gen': aerospike.POLICY_GEN_EQ}
-    ops = [op_helpers.write('user_profile', user_profile),
-           op_helpers.read('user_profile')]
+    client.put(key, {'user_profile': user_profile})
+    #read_gen = metadata['gen']
+    #write_policy = {'gen': aerospike.POLICY_GEN_EQ}
+    #ops = [op_helpers.write('user_profile', user_profile),
+    #       op_helpers.read('user_profile')]
 
-    try:
-        _, metadata, bins = client.operate(key, ops, meta={'gen': read_gen}, policy=write_policy)
-    except ex.RecordGenerationError as e:
-        proc_user_profile(user_tag)
+    #try:
+    #    _, metadata, bins = client.operate(key, ops, meta={'gen': read_gen}, policy=write_policy)
+    #except ex.RecordGenerationError as e:
+    #    proc_user_profile(user_tag)
 
 
 def proc_aggregation(user_tag):

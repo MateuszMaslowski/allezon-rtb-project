@@ -42,7 +42,7 @@ client.connect()
 
 # create_indexes(client)
 
-producer = KafkaProducer(bootstrap_servers=['10.112.135.105:9092'])
+producer = KafkaProducer(bootstrap_servers=['10.112.135.105:9092', '10.112.135.106:9092', '10.112.135.107:9092'])
 
 app = FastAPI()
 

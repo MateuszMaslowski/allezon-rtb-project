@@ -42,7 +42,7 @@ client.connect()
 
 # create_indexes(client)
 
-producer = KafkaProducer(bootstrap_servers=['10.112.135.105:9092', '10.112.135.106:9092', '10.112.135.107:9092'])
+producer = KafkaProducer(bootstrap_servers=['10.112.135.105:9092'])
 
 app = FastAPI()
 
@@ -71,7 +71,7 @@ async def add_user_tag(user_tag: UserTags, response: Response):
 
     user_tag_str = json.dumps(user_tag_json).encode("utf-8")
 
-    producer.send('user_tags_test2', user_tag_str)
+    producer.send('test', user_tag_str)
 
     response.status_code = 204
     return

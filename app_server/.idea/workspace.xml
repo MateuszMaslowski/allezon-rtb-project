@@ -4,6 +4,7 @@
     <list default="true" id="9b258949-26cc-4a0c-8e12-194d59f85189" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,7 +59,7 @@
       <workItem from="1655032725205" duration="338000" />
       <workItem from="1655046002203" duration="8123000" />
       <workItem from="1655130182213" duration="19877000" />
-      <workItem from="1656766957578" duration="1719000" />
+      <workItem from="1656766957578" duration="3034000" />
     </task>
     <servers />
   </component>

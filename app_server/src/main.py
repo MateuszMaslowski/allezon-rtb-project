@@ -55,7 +55,7 @@ async def root():
 @app.post("/user_tags")
 async def add_user_tag(user_tag: UserTags, response: Response):
     user_tag_json = {
-        'time' : user_tag.time,
+        'time': user_tag.time,
         'cookie': user_tag.cookie,
         'country': user_tag.country,
         'device': user_tag.device,

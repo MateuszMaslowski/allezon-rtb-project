@@ -17,4 +17,4 @@ COPY ["src/", "/opt/app_server"]
 
 WORKDIR "/opt/app_server"
 
-ENTRYPOINT ["pypy", "-m", "uvicorn", "--host", "0.0.0.0", "--workers", "1000", "main:app"]
+ENTRYPOINT ["pypy", "-m", "uvicorn", "--host", "0.0.0.0", "--workers", "10", "main:app"]

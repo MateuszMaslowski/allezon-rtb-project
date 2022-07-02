@@ -69,8 +69,6 @@ async def add_user_tag(user_tag: UserTags, response: Response):
         }
     }
 
-    print(user_tag)
-    
     user_tag_str = json.dumps(user_tag_json).encode("utf-8")
 
     producer.send('user_tags_test2', user_tag_str)
@@ -93,6 +91,9 @@ async def get_user_profile(cookie: str = Query(min_length=1),
         if len(new_actions) > limit:
             new_actions = new_actions[:limit]
         return new_actions
+
+    response.status_code = 200
+    return {'cookie': 'xd'}
 
     if not client.is_connected():
         client.connect()
@@ -127,6 +128,9 @@ async def get_aggregates(time_range: str = Query(regex="^(" + time_range_rgx + "
                          category_id: Union[str, None] = Query(default=None), 
                          aggregates: List[str] = Query(default=None), 
                          response: Response = 200):
+    response.status_code = 200
+    return {'cookie': 'xd'}
+
     res = {
         'colums': ["1m_bucket", "action"],
         'rows': []

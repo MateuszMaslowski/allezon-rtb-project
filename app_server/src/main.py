@@ -21,18 +21,25 @@ utc_date_time_rgx = "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z"
 date_time_rgx = "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:(\d{2}|\d{2}.\d{3})"
 time_range_rgx = date_time_rgx + "_" + date_time_rgx
 
-hostIP = '10.112.135.103'
-if random.randint(0, 1) == 1:
-    hostIP = '10.112.135.104'
-
 config = {
     'hosts': [
-        (hostIP, 3000)
+        ('10.112.135.103', 3000),
+        ('10.112.135.104', 3000)
     ]
 }
 
-write_policies = {'total_timeout': 2000, 'max_retries': 1}
-read_policies = {'total_timeout': 2000, 'max_retries': 2}
+write_policies = {
+    'total_timeout': 2000,
+    'max_retries': 1,
+    'commit_level': aerospike.POLICY_COMMIT_LEVEL_MASTER
+}
+
+read_policies = {
+    'total_timeout': 2000,
+    'max_retries': 2,
+    'commit_level': aerospike.POLICY_COMMIT_LEVEL_MASTER
+}
+
 policies = {'write': write_policies, 'read': read_policies}
 config['policies'] = policies
 

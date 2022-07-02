@@ -22,23 +22,34 @@ buckets = {}
 
 lock = Lock()
 
-hostIP = '10.112.135.103'
-if random.randint(0, 1) == 1:
-    hostIP = '10.112.135.104'
-
 config = {
     'hosts': [
-        (hostIP, 3000)
-    ],
-    'policy': {
-        'key': aerospike.POLICY_COMMIT_LEVEL_MASTER,
-        'total_timeout': 100000,
-    }
+        ('10.112.135.103', 3000),
+        ('10.112.135.104', 3000)
+    ]
+#    'policy': {
+#        'commit_level': aerospike.POLICY_COMMIT_LEVEL_MASTER,
+#        'total_timeout': 100000
+#    }
 }
 
-write_policies = {'total_timeout': 35000, 'max_retries': 1}
-read_policies = {'total_timeout': 20000, 'max_retries': 3}
-operate_policies = {'total_timeout': 50000, 'max_retries': 3}
+write_policies = {
+    'total_timeout': 35000,
+    'max_retries': 1,
+    'commit_level': aerospike.POLICY_COMMIT_LEVEL_MASTER
+}
+
+read_policies = {
+    'total_timeout': 20000,
+    'max_retries': 3,
+    'commit_level': aerospike.POLICY_COMMIT_LEVEL_MASTER
+}
+operate_policies = {
+    'total_timeout': 50000,
+    'max_retries': 3,
+    'commit_level': aerospike.POLICY_COMMIT_LEVEL_MASTER
+}
+
 policies = {'write': write_policies, 'read': read_policies, 'operate': operate_policies}
 config['policies'] = policies
 
@@ -154,7 +165,8 @@ consumer = KafkaConsumer('user_tags_test2',
                          bootstrap_servers=['10.112.135.105:9092', '10.112.135.106:9092', '10.112.135.107:9092'],
                          auto_offset_reset='earliest',
                          #enable_auto_commit=True,
-                         group_id='tag-group'
+                         group_id='tag-group',
+                         num_messages=1000
                          #value_deserializer=lambda x: json.loads(x.decode('utf-8')
                           )
 
